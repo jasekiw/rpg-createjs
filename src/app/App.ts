@@ -1,3 +1,4 @@
+/// <reference path="../typings/index.d.ts" />
 import {Settings} from "./Settings";
 import Stage = createjs.Stage;
 import {Map} from "./Map";
