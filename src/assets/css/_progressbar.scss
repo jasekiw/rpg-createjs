@@ -1,0 +1,59 @@
+.player-health {
+    margin-left: auto;
+}
+
+.healthContainer {
+    text-align: right;
+    position: absolute;
+    right: 25px;
+}
+
+.progress-bar {
+    text-align: left;
+    background-color: #1a1a1a;
+    height: 25px;
+    padding: 5px;
+    width: 350px;
+    /*margin: 70px 0 20px 0;*/
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+    -webkit-box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+    box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;
+}
+
+.glow span {
+    -moz-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;
+    -webkit-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;
+    box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;
+    -webkit-animation: animate-glow 1s ease-out infinite;
+    -moz-animation: animate-glow 1s ease-out infinite;
+}
+
+.green span {
+    background-color: #a5df41;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#a5df41), to(#4ca916));
+    background-image: -webkit-linear-gradient(top, #a5df41, #4ca916);
+    background-image: -moz-linear-gradient(top, #a5df41, #4ca916);
+    background-image: -ms-linear-gradient(top, #a5df41, #4ca916);
+    background-image: -o-linear-gradient(top, #a5df41, #4ca916);
+    background-image: linear-gradient(top, #a5df41, #4ca916);
+}
+
+.progress-bar span {
+    display: inline-block;
+    height: 100%;
+    background-color: #777;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+    -webkit-transition: width .4s ease-in-out;
+    -moz-transition: width .4s ease-in-out;
+    -ms-transition: width .4s ease-in-out;
+    -o-transition: width .4s ease-in-out;
+    transition: width .4s ease-in-out;
+}
