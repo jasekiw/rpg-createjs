@@ -8,8 +8,8 @@ import {Settings} from "./Settings";
 export class Map {
     private tileWidth = 100;
     private tileHeight = 100;
-    private initialLocationX : number;
-    private initialLocationY : number;
+    private screenMiddleXPx : number;
+    private screenMiddleYPx : number;
     private enemies = [];
     private player;
     private width: number;
@@ -18,8 +18,8 @@ export class Map {
     private groundImg : HTMLImageElement;
     constructor(width, height) {
         this.groundImg = <HTMLImageElement>Settings.loader.getResult("grass");
-        this.initialLocationX = Math.round(((window.innerWidth / 2)));
-        this.initialLocationY = Math.round(((window.innerHeight / 2)));
+        this.screenMiddleXPx = Math.round(((window.innerWidth / 2)));
+        this.screenMiddleYPx = Math.round(((window.innerHeight / 2)));
         this.width = width;
         this.height = height;
         for (var x = 0; x < width; x++)
@@ -82,8 +82,8 @@ export class Map {
     }
 
     setPlayerLocation(moveX, moveY) {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        var left = this.screenMiddleXPx;
+        var top = this.screenMiddleYPx;
 
         for (var x = 0; x < this.width; x++) {
             for (var y = 0; y < this.height; y++) {
@@ -96,8 +96,8 @@ export class Map {
             this.enemies[i].updatePosition();
     }
     setPlayerTile(moveX, moveY) {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        var left = this.screenMiddleXPx;
+        var top = this.screenMiddleYPx;
         for (var y = 0; y < this.height; y++) {
             for (var x = 0; x < this.width; x++) {
                 var elem = this.backgroundArr[y][x];
@@ -108,25 +108,27 @@ export class Map {
     };
 
     getPlayerLocationX() {
-        var left = this.initialLocationX;
+        var left = this.screenMiddleXPx;
         var elem = this.backgroundArr[0][0];
+        console.log("returnX", Math.floor( (elem.x - left) / -100));
         return Math.floor( (elem.x - left) / -100)
     }
     getPlayerOffsetX() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        var left = this.screenMiddleXPx;
+        var top = this.screenMiddleYPx;
         var elem = this.backgroundArr[0][0];
         return ( (elem.x - left) / -100) - Math.floor( (elem.x - left) / -100);
     }
     getPlayerLocationY() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        var left = this.screenMiddleXPx;
+        var top = this.screenMiddleYPx;
         var elem = this.backgroundArr[0][0];
+        console.log("returnY", Math.floor( (elem.y - top) / -100));
         return Math.floor( (elem.y - top) / -100)
     };
     getPlayerOffsetY() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        var left = this.screenMiddleXPx;
+        var top = this.screenMiddleYPx;
         var elem = this.backgroundArr[0][0];
         return ( (elem.y - top) / -100) - Math.floor( (elem.y - top) / -100);
     }
