@@ -1,5 +1,6 @@
-import {getTime} from "./GlobalFunctions";
+import {getTime} from "./utils";
 import {Resources} from "./Resources";
+import {Settings} from "./Settings";
 /**
  * CharacterSpriteSheet Class
  * @param element
@@ -11,10 +12,29 @@ export class CharacterSpriteSheet {
     private frame = 131;
     private lastDirection = "down";
     private speed = 100;
-    private element;
-    constructor(element) {
-        this.element = element;
+    private element: createjs.Shape;
+    private sprites = {};
+
+    loadSprites() {
+        let sprites = {};
+        for(let i =1 ; i< 273; i++)
+        {
+            sprites["character_" + i] = Settings.loader.getResult("character_" + i);
+        }
+        this.sprites = sprites;
     }
+
+    public getSprite(number: number) {
+        return this.sprites["character_" + number];
+    }
+    public setShape(shape: createjs.Shape) {
+        this.element = shape;
+    }
+
+    public getDefaultSprite() {
+        return this.sprites["character_" + 131];
+    }
+
     animateUp() {
         var low = 105;
         this.animateSprite(low, 8);
@@ -84,8 +104,8 @@ export class CharacterSpriteSheet {
     }
     changeSprite(number) {
         this.frame = number;
-        var numerator = number < 10 ? "0" + number.toString() : number.toString();
-        this.element.src = Resources.getCharacter(numerator);
+        this.element.graphics.clear();
+        this.element.graphics.beginBitmapFill(this.getSprite(number)).drawRect(0, 0, 100, 100);
     }
     ResetSprite() {
         if (this.lastDirection.indexOf("up") > -1)

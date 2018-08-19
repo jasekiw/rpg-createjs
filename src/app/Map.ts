@@ -44,28 +44,12 @@ export class Map {
     }
 
     protected addBackgroundElement(x, y) {
-
-
-
         let background = new createjs.Shape();
         background.graphics.beginBitmapFill(this.groundImg).drawRect(0, 0, this.tileWidth, this.tileHeight);
         background.x = (x * this.tileWidth);
         background.y = (y * this.tileHeight);
         Settings.stage.addChild(background);
         return background;
-        // var ni = document.getElementById('gameBackground');
-        // var newDiv = document.createElement('img');
-        // var divIdName = 'img' + x + ";" + y;
-        // newDiv.setAttribute('id', divIdName);
-        // newDiv.setAttribute('src', Resources.grass);
-        // newDiv.setAttribute('width', '100px');
-        // newDiv.setAttribute('height', '100px');
-        // newDiv.className = 'tile';
-        // newDiv.style.position = 'absolute';
-        // newDiv.style.left = (x * 100) + 'px';
-        // newDiv.style.top = (y * 100) + 'px';
-        // ni.appendChild(newDiv);
-        // return newDiv;
     }
 
     getPlayer() {

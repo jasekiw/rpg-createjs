@@ -1,14 +1,16 @@
-import {getTime} from "./GlobalFunctions";
+import {getTime} from "./utils";
 import {Resources} from "./Resources";
 import {KeyboardHandler} from "./keyboard/KeyboardHandler";
 import {Keys} from "./keyboard/Keys";
+import {Settings} from "./Settings";
+import {CharacterSpriteSheet} from "./CharacterSpriteSheet";
 // import {MoveAutomation} from "./MoveAutomation";
 // import {ChatConsole} from "./ChatConsole";
 
 
 export class Player {
-    private imgLocation = Resources.getCharacter("131");
-    private element;
+    private imgId = "character_131";
+    private element: createjs.Shape;
     private level = 1;
     private experience = 0;
     private hp : number;
@@ -21,21 +23,32 @@ export class Player {
     private lastTime = getTime();
     private yawn = false;
     private status = "idle";
-    private characterSpriteSheet;
+    private characterSpriteSheet: CharacterSpriteSheet;
     private kbHandler : KeyboardHandler;
 
-    constructor(elementParam, mapParam, characterSpriteSheet, keyboardHander : KeyboardHandler) {
+
+
+    constructor(mapParam, characterSpriteSheet: CharacterSpriteSheet, keyboardHander : KeyboardHandler) {
         this.map = mapParam;
-        this.element = elementParam;
+
         this.hp = this.level * 100;
         this.characterSpriteSheet = characterSpriteSheet;
         this.kbHandler = keyboardHander;
         // this.automation = new MoveAutomation(this, this.map);
         this.map.setPlayerTile(0, 0);
         this.map.addPlayer(this);
-        this.element.style.left = Math.round(((window.innerWidth / 2)) - 50) + 'px';
-        this.element.style.top = Math.round(((window.innerHeight / 2))) - 100 + 'px';
-        this.element.setAttribute('src', this.imgLocation);
+        // this.element.style.left = Math.round(((window.innerWidth / 2)) - 50) + 'px';
+        // this.element.style.top = Math.round(((window.innerHeight / 2))) - 100 + 'px';
+        // this.element.setAttribute('src', this.imgId);
+
+
+        let character = new createjs.Shape();
+        character.graphics.beginBitmapFill(this.characterSpriteSheet.getDefaultSprite()).drawRect(0, 0, 100, 100);
+        character.x = Math.round(((window.innerWidth / 2)) - 50);
+        character.y = Math.round(((window.innerHeight / 2))) - 100;
+        Settings.stage.addChild(character);
+        this.characterSpriteSheet.setShape(character);
+        this.element = character;
     }
     getLevel() {
         return this.level;
@@ -144,8 +157,8 @@ export class Player {
     }
 
     setLocationOnScreen(x, y) {
-        this.element.style.top = y + "px";
-        this.element.style.left = x + "px";
+        this.element.y = y;
+        this.element.x = x;
     }
     setLocation(x, y) {
         this.map.setPlayerLocation(x, y);

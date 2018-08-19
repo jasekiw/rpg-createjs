@@ -19,3 +19,9 @@ export function getLeftOfElement(elem) {
 export function getTopOfElement(elem) {
     return getValueFromCss(elem.style.top);
 }
+
+export function padLeft(number) {
+    const str = "" + number;
+    const pad = "00";
+    return pad.substring(0, pad.length - str.length) + str
+}
