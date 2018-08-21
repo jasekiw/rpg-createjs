@@ -16,6 +16,7 @@ export class Map {
     public readonly height: number;
     private backgroundArr : createjs.Shape[][] = [];
     private groundImg : HTMLImageElement;
+
     constructor(width, height) {
         this.initialLocationX = Math.round(((window.innerWidth / 2)));
         this.initialLocationY = Math.round(((window.innerHeight / 2)));
@@ -54,13 +55,13 @@ export class Map {
     }
 
     getEnemyIn(x, y) {
-        for (var i = 0; i < this.enemies.length; i++)
+        for (let i = 0; i < this.enemies.length; i++)
             if (this.enemies[i].getLocationX() == x && this.enemies[i].getLocationY() == y)
                 return this.enemies[i];
         return null;
     }
     removeEnemy(id) {
-        for (var i = 0; i < this.enemies.length; i++)
+        for (let i = 0; i < this.enemies.length; i++)
             if (this.enemies[i].getId() == id)
                 this.enemies.splice(i, 1);
     }
@@ -74,25 +75,25 @@ export class Map {
     }
 
     setPlayerLocation(moveX, moveY) {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
+        const left = this.initialLocationX;
+        const top = this.initialLocationY;
 
-        for (var x = 0; x < this.width; x++) {
-            for (var y = 0; y < this.height; y++) {
-                var elem = this.backgroundArr[y][x];
+        for (let x = 0; x < this.width; x++) {
+            for (let y = 0; y < this.height; y++) {
+                let elem = this.backgroundArr[y][x];
                 elem.x = (x * 100) + (moveX * -100) + left ;
                 elem.y = (y * 100) + (moveY * -100) + top;
             }
         }
-        for (var i = 0; i < this.enemies.length; i++)
+        for (let i = 0; i < this.enemies.length; i++)
             this.enemies[i].updatePosition();
     }
     setPlayerTile(moveX, moveY) {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
-        for (var y = 0; y < this.height; y++) {
-            for (var x = 0; x < this.width; x++) {
-                var elem = this.backgroundArr[y][x];
+        const left = this.initialLocationX;
+        const top = this.initialLocationY;
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let elem = this.backgroundArr[y][x];
                 elem.x = (x * 100) + (moveX * -this.tileWidth) + left - (this.tileWidth / 2);
                 elem.y = (y * 100) + (moveY * -this.tileHeight) + top - (this.tileHeight / 2);
             }
@@ -100,26 +101,22 @@ export class Map {
     };
 
     getPlayerLocationX() {
-        var left = this.initialLocationX;
-        var elem = this.backgroundArr[0][0];
+        const left = this.initialLocationX;
+        const elem = this.backgroundArr[0][0];
         return Math.floor( (elem.x - left) / -100)
     }
+    getPlayerLocationY() {
+        const elem = this.backgroundArr[0][0];
+        return Math.floor( (elem.y - this.initialLocationY) / -100)
+    }
     getPlayerOffsetX() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
-        var elem = this.backgroundArr[0][0];
+        const left = this.initialLocationX;
+        const elem = this.backgroundArr[0][0];
         return ( (elem.x - left) / -100) - Math.floor( (elem.x - left) / -100);
     }
-    getPlayerLocationY() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
-        var elem = this.backgroundArr[0][0];
-        return Math.floor( (elem.y - top) / -100)
-    };
     getPlayerOffsetY() {
-        var left = this.initialLocationX;
-        var top = this.initialLocationY;
-        var elem = this.backgroundArr[0][0];
+        const top = this.initialLocationY;
+        const elem = this.backgroundArr[0][0];
         return ( (elem.y - top) / -100) - Math.floor( (elem.y - top) / -100);
     }
 

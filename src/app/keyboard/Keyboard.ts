@@ -4,7 +4,7 @@ import {Keys} from "./Keys";
 /**
  *
  */
-export class KeyboardHandler {
+export class Keyboard {
 
     private keyMap : KeyState[] = [];
     private inputEnabled : boolean = true;

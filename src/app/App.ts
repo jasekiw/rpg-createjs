@@ -4,29 +4,25 @@ import Stage = createjs.Stage;
 import {Map} from "./Map";
 import {Player} from "./Player";
 import {CharacterSpriteSheet} from "./CharacterSpriteSheet";
-import {KeyboardHandler} from "./keyboard/KeyboardHandler";
+import {Keyboard} from "./keyboard/Keyboard";
 import {padLeft} from "./utils";
-
-
+import {PlayerInput} from './PlayerInput';
 
 class App {
 
     private loader : createjs.LoadQueue;
     private stage : Stage;
     private player : Player;
-
-    private aKBHandler : KeyboardHandler;
+    private playerInput: PlayerInput;
+    private keyboard : Keyboard;
     private map : Map;
 
     constructor() {
         this.stage = new createjs.Stage("gameCanvas");
-        this.aKBHandler = new KeyboardHandler();
+        this.keyboard = new Keyboard();
+        this.playerInput = new PlayerInput(this.keyboard);
         Settings.stage = this.stage;
-        (<HTMLCanvasElement>this.stage.canvas).width = window.innerWidth;
-        (<HTMLCanvasElement>this.stage.canvas).height = window.innerHeight;
-        Settings.width = (<HTMLCanvasElement>this.stage.canvas).width;
-        Settings.height = (<HTMLCanvasElement>this.stage.canvas).height;
-
+        this.setScreenSize();
         this.loader = new createjs.LoadQueue(false);
         Settings.loader = this.loader;
         this.loader.addEventListener("complete", (e : Event) => this.init(e));
@@ -44,23 +40,28 @@ class App {
         ];
     }
 
-    init(event : Event) {
-        window.addEventListener('resize', (event : Event) => {
+    setScreenSize() {
+        (<HTMLCanvasElement>this.stage.canvas).width = window.innerWidth;
+        (<HTMLCanvasElement>this.stage.canvas).height = window.innerHeight;
+        Settings.width = window.innerWidth;
+        Settings.height = window.innerHeight;
+    }
 
-            (<HTMLCanvasElement>this.stage.canvas).width = window.innerWidth;
-            (<HTMLCanvasElement>this.stage.canvas).height = window.innerHeight;
-            Settings.width = window.innerWidth;
-            Settings.height = window.innerHeight;
-        });
+    init(event : Event) {
+        window.addEventListener('resize', () => this.setScreenSize());
         this.map = new Map(50,50);
-        var characterSpriteSheet = new CharacterSpriteSheet();
+        const characterSpriteSheet = new CharacterSpriteSheet();
         characterSpriteSheet.loadSprites();
-        this.player = new Player(this.map, characterSpriteSheet, this.aKBHandler);
+        this.player = new Player(characterSpriteSheet);
+        // this.automation = new MoveAutomation(this, this.map);
+        this.map.setPlayerTile(0, 0);
+        this.map.addPlayer(this.player);
         createjs.Ticker.timingMode = createjs.Ticker.RAF;
         createjs.Ticker.addEventListener("tick", (e : Event) => this.tick(e));
     }
 
     tick(event : Event) {
+        this.playerInput.handleInput(this.player,this.map);
         this.player.update();
         this.stage.update(event);
     }

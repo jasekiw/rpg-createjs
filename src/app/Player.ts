@@ -1,55 +1,43 @@
 import {getTime} from "./utils";
 import {Resources} from "./Resources";
-import {KeyboardHandler} from "./keyboard/KeyboardHandler";
+import {Keyboard} from "./keyboard/Keyboard";
 import {Keys} from "./keyboard/Keys";
 import {Settings} from "./Settings";
 import {CharacterSpriteSheet} from "./CharacterSpriteSheet";
+import {Map} from './Map';
+import {EFacing} from './EFacing';
 // import {MoveAutomation} from "./MoveAutomation";
 // import {ChatConsole} from "./ChatConsole";
 
 
 export class Player {
-    private imgId = "character_131";
-    private element: createjs.Shape;
+    private imageShape: createjs.Shape;
     private level = 1;
     private experience = 0;
     private hp : number;
     private _alive = true;
     public get alive() { return this._alive; }
-    private map;
     private automationComplete = true;
 
     // private automation;
     private time = getTime();
-    private lastTime = getTime();
+    private lastYawnTime = getTime();
     private yawn = false;
     private status = "idle";
     private characterSpriteSheet: CharacterSpriteSheet;
-    private kbHandler : KeyboardHandler;
 
 
 
-    constructor(mapParam, characterSpriteSheet: CharacterSpriteSheet, keyboardHander : KeyboardHandler) {
-        this.map = mapParam;
-
+    constructor(characterSpriteSheet: CharacterSpriteSheet) {
         this.hp = this.level * 100;
         this.characterSpriteSheet = characterSpriteSheet;
-        this.kbHandler = keyboardHander;
-        // this.automation = new MoveAutomation(this, this.map);
-        this.map.setPlayerTile(0, 0);
-        this.map.addPlayer(this);
-        // this.element.style.left = Math.round(((window.innerWidth / 2)) - 50) + 'px';
-        // this.element.style.top = Math.round(((window.innerHeight / 2))) - 100 + 'px';
-        // this.element.setAttribute('src', this.imgId);
-
-
         let character = new createjs.Shape();
         character.graphics.beginBitmapFill(this.characterSpriteSheet.getDefaultSprite()).drawRect(0, 0, 100, 100);
         character.x = Math.round(((window.innerWidth / 2)) - 50);
         character.y = Math.round(((window.innerHeight / 2))) - 100;
         Settings.stage.addChild(character);
         this.characterSpriteSheet.setShape(character);
-        this.element = character;
+        this.imageShape = character;
     }
     getLevel() {
         return this.level;
@@ -68,11 +56,10 @@ export class Player {
     };
 
     update() {
-        this.handleInput();
         if (!this.yawn) {
             this.time = getTime();
         }
-        if ((this.time - this.lastTime) > Math.round(Math.random() * 10000) + 20000) {
+        if ((this.time - this.lastYawnTime) > Math.round(Math.random() * 10000) + 20000) {
             this.yawn = true;
             this.resetYawnTimer();
         }
@@ -86,21 +73,6 @@ export class Player {
         }
     }
 
-
-    handleInput() {
-        if (this.kbHandler.isKeyDown(Keys.KEY_W))
-            this.moveUp();
-        else if (this.kbHandler.isKeyDown(Keys.KEY_S))
-            this.moveDown();
-        else if (this.kbHandler.isKeyDown(Keys.KEY_D))
-            this.moveRight();
-        else if (this.kbHandler.isKeyDown(Keys.KEY_A))
-            this.moveLeft();
-        else if (this.kbHandler.isKeyDown(Keys.KEY_J))
-            this.attack();
-        else
-            this.characterSpriteSheet.ResetSprite();
-    }
 
     healFull() {
         this.hp = this.level * 100;
@@ -123,24 +95,30 @@ export class Player {
         }
     }
 
-    attack() {
+    attack(map: Map) {
         const attackDone = !this.characterSpriteSheet.animateAttack();
         if (!attackDone) return;
-        const enemy = this.getEnemy();
+        const enemy = this.getEnemy(map);
         if (enemy != null) this.attackEnemy(enemy);
     }
 
-    private getEnemy() {
-        const lastDirection = this.characterSpriteSheet.getLastDirection();
-        if (lastDirection.indexOf("up") > -1)
-            return this.map.getEnemyIn(this.getLocationX(), this.getLocationY() - 1);
-        else if (lastDirection.indexOf("down") > -1)
-            return this.map.getEnemyIn(this.getLocationX(), this.getLocationY() + 1);
-        else if (lastDirection.indexOf("left") > -1)
-            return this.map.getEnemyIn(this.getLocationX() - 1, this.getLocationY());
-        else if (lastDirection.indexOf("right") > -1)
-            return this.map.getEnemyIn(this.getLocationX() + 1, this.getLocationY());
-        else return null;
+    // which direction is the character facing
+    public getFacing(): EFacing {
+        return this.characterSpriteSheet.getLastDirection();
+    }
+
+    public resetAnimation() {
+        this.characterSpriteSheet.ResetSprite();
+    }
+
+    private getEnemy(map: Map) {
+        switch(this.getFacing()) {
+            case EFacing.UP:   return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) - 1);
+            case EFacing.DOWN: return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) + 1);
+            case EFacing.LEFT: return map.getEnemyIn(this.getLocationX(map) - 1, this.getLocationY(map));
+            case EFacing.RIGHT: return map.getEnemyIn(this.getLocationX(map) + 1, this.getLocationY(map));
+            default: return null;
+        }
     }
 
     attackEnemy(Monster) {
@@ -151,30 +129,31 @@ export class Player {
     }
 
     setLocationOnScreen(x, y) {
-        this.element.y = y;
-        this.element.x = x;
+        this.imageShape.y = y;
+        this.imageShape.x = x;
     }
-    setLocation(x, y) {
-        this.map.setPlayerLocation(x, y);
+
+    setLocation(map: Map, x, y) {
+        map.setPlayerLocation(x, y);
     }
-    moveUp() {
+    moveUp(map: Map) {
         this.characterSpriteSheet.animateUp();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() - .1);
+        map.setPlayerLocation(this.getLocationX(map) + this.getOffsetX(map), this.getLocationY(map) + this.getOffsetY(map) - .1);
         this.finishMove("moving-up");
     }
-    moveDown() {
+    moveDown(map: Map) {
         this.characterSpriteSheet.animateDown();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() + .1);
+        map.setPlayerLocation(this.getLocationX(map) + this.getOffsetX(map), this.getLocationY(map) + this.getOffsetY(map) + .1);
         this.finishMove("moving-down");
     };
-    moveRight() {
+    moveRight(map: Map) {
         this.characterSpriteSheet.animateRight();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() + .1, this.getLocationY() + this.getOffsetY());
+        map.setPlayerLocation(this.getLocationX(map) + this.getOffsetX(map) + .1, this.getLocationY(map) + this.getOffsetY(map));
         this.finishMove("moving-right");
     }
-    moveLeft() {
+    moveLeft(map: Map) {
         this.characterSpriteSheet.animateLeft();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() - .1, this.getLocationY() + this.getOffsetY());
+        map.setPlayerLocation(this.getLocationX(map) + this.getOffsetX(map) - .1, this.getLocationY(map) + this.getOffsetY(map));
         this.finishMove("moving-left");
     }
 
@@ -184,21 +163,21 @@ export class Player {
         this.status = move;
     }
 
-    getLocationX() {
-        return this.map.getPlayerLocationX();
+    getLocationX(map: Map) {
+        return map.getPlayerLocationX();
     }
-    getLocationY() {
-        return this.map.getPlayerLocationY();
+    getLocationY(map: Map) {
+        return map.getPlayerLocationY();
     }
-    getOffsetX() {
-        return this.map.getPlayerOffsetX();
+    getOffsetX(map: Map) {
+        return map.getPlayerOffsetX();
     }
-    getOffsetY() {
-        return this.map.getPlayerOffsetY();
+    getOffsetY(map: Map) {
+        return map.getPlayerOffsetY();
     }
     resetYawnTimer() {
         this.time = getTime();
-        this.lastTime = this.time;
+        this.lastYawnTime = this.time;
     }
 }
 

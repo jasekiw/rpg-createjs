@@ -1,6 +1,6 @@
 import {getTime} from "./utils";
-import {Resources} from "./Resources";
 import {Settings} from "./Settings";
+import {EFacing} from './EFacing';
 /**
  * CharacterSpriteSheet Class
  * @param element
@@ -10,7 +10,7 @@ export class CharacterSpriteSheet {
     private lastTime = getTime();
     private time = getTime();
     private frame = 131;
-    private lastDirection = "down";
+    private lastDirection = EFacing.DOWN;
     private speed = 100;
     private element: createjs.Shape;
     private sprites = {};
@@ -36,50 +36,37 @@ export class CharacterSpriteSheet {
     }
 
     animateUp() {
-        var low = 105;
-        this.animateSprite(low, 8);
-        this.lastDirection = "up"
+        this.animateDirection(105, EFacing.UP);
     }
     animateDown() {
-        var low = 131;
-        this.animateSprite(low, 8);
-        this.lastDirection = "down"
+        this.animateDirection(131, EFacing.DOWN);
     }
     animateLeft() {
-        var low = 118;
-        this.animateSprite(low, 8);
-        this.lastDirection = "left"
+        this.animateDirection(118, EFacing.LEFT);
     }
     animateRight() {
+        this.animateDirection(144, EFacing.RIGHT);
+    }
 
-        var low = 144;
-        this.animateSprite(low, 8);
-        this.lastDirection = "right"
+    animateDirection(base: number, direction: EFacing) {
+        this.animateSprite(base, 8);
+        this.lastDirection = direction
     }
     animateYawn() {
-        var response = true;
-        if (this.lastDirection.indexOf("up") > -1)
-            response = this.animateSprite(1, 6);
-        else if (this.lastDirection.indexOf("down") > -1)
-            response = this.animateSprite(27, 6);
-        else if (this.lastDirection.indexOf("left") > -1)
-            response = this.animateSprite(14, 6);
-        else if (this.lastDirection.indexOf("right") > -1)
-            response = this.animateSprite(40, 6);
-        return response;
+        return this.animate4Directions(1, 27, 14, 40, 6, true);
     }
     animateAttack() {
-        var response = false;
-        if (this.lastDirection.indexOf("up") > -1)
-            response = this.animateSprite(157, 5);
-        else if (this.lastDirection.indexOf("down") > -1)
-            response = this.animateSprite(183, 5);
-        else if (this.lastDirection.indexOf("left") > -1)
-            response = this.animateSprite(170, 5);
-        else if (this.lastDirection.indexOf("right") > -1)
-            response = this.animateSprite(196, 5);
+        return this.animate4Directions(157, 183, 170, 196, 5, false);
+    }
 
-        return response;
+    animate4Directions(upBase, DownBase, leftBase, rightBase, length, defaultReturn) {
+        switch(this.lastDirection) {
+            case EFacing.UP: return this.animateSprite(upBase, length);
+            case EFacing.DOWN: return this.animateSprite(DownBase, 5);
+            case EFacing.LEFT: return this.animateSprite(leftBase, 5);
+            case EFacing.RIGHT: return this.animateSprite(rightBase, length);
+            default: return defaultReturn;
+        }
     }
     animateSprite(number, length) {
         this.time = getTime();
@@ -107,17 +94,18 @@ export class CharacterSpriteSheet {
         this.element.graphics.clear();
         this.element.graphics.beginBitmapFill(this.getSprite(number)).drawRect(0, 0, 100, 100);
     }
+
     ResetSprite() {
-        if (this.lastDirection.indexOf("up") > -1)
-            this.changeSprite(106);
-        else if (this.lastDirection.indexOf("down") > -1)
-            this.changeSprite(131);
-        else if (this.lastDirection.indexOf("left") > -1)
-            this.changeSprite(118);
-        else if (this.lastDirection.indexOf("right") > -1)
-            this.changeSprite(144);
+        switch(this.lastDirection) {
+            case EFacing.UP:  this.changeSprite(106); break;
+            case EFacing.DOWN: this.changeSprite(131); break;
+            case EFacing.LEFT: this.changeSprite(118); break;
+            case EFacing.RIGHT: this.changeSprite(144); break;
+            default: this.changeSprite(131); break;
+        }
     }
-    getLastDirection() {
+
+    getLastDirection(): EFacing {
         return this.lastDirection;
     }
 
