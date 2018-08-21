@@ -8,37 +8,29 @@ import {Settings} from "./Settings";
 export class Map {
     private tileWidth = 100;
     private tileHeight = 100;
-    private initialLocationX : number;
-    private initialLocationY : number;
+    private readonly initialLocationX : number;
+    private readonly initialLocationY : number;
     private enemies = [];
     private player;
-    private width: number;
-    private height: number;
+    public readonly width: number;
+    public readonly height: number;
     private backgroundArr : createjs.Shape[][] = [];
     private groundImg : HTMLImageElement;
     constructor(width, height) {
-        this.groundImg = <HTMLImageElement>Settings.loader.getResult("grass");
         this.initialLocationX = Math.round(((window.innerWidth / 2)));
         this.initialLocationY = Math.round(((window.innerHeight / 2)));
         this.width = width;
         this.height = height;
-        for (var x = 0; x < width; x++)
-            for (var y = 0; y < height; y++)
-            {
-                let elem = this.addBackgroundElement(x, y);
-                if(this.backgroundArr[y] == null)
-                    this.backgroundArr[y] = [];
-                this.backgroundArr[y][x] = elem;
+        this.groundImg = <HTMLImageElement>Settings.loader.getResult("grass");
+
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                if (this.backgroundArr[y] == null) this.backgroundArr[y] = [];
+                this.backgroundArr[y][x] = this.addBackgroundElement(x, y);
             }
+        }
+    }
 
-
-    }
-    public getWidth() {
-        return this.width;
-    }
-    public getHeight() {
-        return this.height;
-    }
     addPlayer(player) {
         this.player = player;
     }

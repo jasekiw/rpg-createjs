@@ -14,7 +14,8 @@ export class Player {
     private level = 1;
     private experience = 0;
     private hp : number;
-    private alive = true;
+    private _alive = true;
+    public get alive() { return this._alive; }
     private map;
     private automationComplete = true;
 
@@ -109,49 +110,42 @@ export class Player {
         this.hp += number;
     }
     getAlive() {
-        return this.alive;
+        return this._alive;
     }
     takeDamage(number) {
         this.hp -= number;
         // ChatConsole.LogThis("You took " + number + " damage. Your hp is: " + this.hp);
         if (this.hp <= 0) {
             // ChatConsole.LogThis("Oh Dear, You are dead!");
-            this.alive = false;
-            var elem = document.getElementById("character");
+            this._alive = false;
+            const elem = document.getElementById("character");
             elem.parentNode.removeChild(elem);
         }
     }
 
     attack() {
-        var attackDone = !this.characterSpriteSheet.animateAttack();
-        if (!attackDone)
-            return;
-        var lastDirection = this.characterSpriteSheet.getLastDirection();
-        if (lastDirection.indexOf("up") > -1) {
-            var enemy = this.map.getEnemyIn(this.getLocationX(), this.getLocationY() - 1);
-            if (enemy != null)
-                this.attackEnemy(enemy);
-        }
-        else if (lastDirection.indexOf("down") > -1) {
-            var enemy = this.map.getEnemyIn(this.getLocationX(), this.getLocationY() + 1);
-            if (enemy != null)
-                this.attackEnemy(enemy);
-        }
-        else if (lastDirection.indexOf("left") > -1) {
-            var enemy = this.map.getEnemyIn(this.getLocationX() - 1, this.getLocationY());
-            if (enemy != null)
-                this.attackEnemy(enemy);
-        }
-        else if (lastDirection.indexOf("right") > -1) {
-            var enemy = this.map.getEnemyIn(this.getLocationX() + 1, this.getLocationY());
-            if (enemy != null)
-                this.attackEnemy(enemy);
-        }
+        const attackDone = !this.characterSpriteSheet.animateAttack();
+        if (!attackDone) return;
+        const enemy = this.getEnemy();
+        if (enemy != null) this.attackEnemy(enemy);
+    }
+
+    private getEnemy() {
+        const lastDirection = this.characterSpriteSheet.getLastDirection();
+        if (lastDirection.indexOf("up") > -1)
+            return this.map.getEnemyIn(this.getLocationX(), this.getLocationY() - 1);
+        else if (lastDirection.indexOf("down") > -1)
+            return this.map.getEnemyIn(this.getLocationX(), this.getLocationY() + 1);
+        else if (lastDirection.indexOf("left") > -1)
+            return this.map.getEnemyIn(this.getLocationX() - 1, this.getLocationY());
+        else if (lastDirection.indexOf("right") > -1)
+            return this.map.getEnemyIn(this.getLocationX() + 1, this.getLocationY());
+        else return null;
     }
 
     attackEnemy(Monster) {
-        var damage = Math.round(Math.random() * (this.level * 30));
-        var blockChance = Monster.getLevel() / (this.level * 2);
+        const damage = Math.round(Math.random() * (this.level * 30));
+        const blockChance = Monster.getLevel() / (this.level * 2);
         if (!((blockChance * 100) > (Math.random() * 100)))
             Monster.takeDamage(damage);
     }
@@ -166,31 +160,28 @@ export class Player {
     moveUp() {
         this.characterSpriteSheet.animateUp();
         this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() - .1);
-        this.resetYawnTimer();
-        this.yawn = false;
-        status = "moving-up";
+        this.finishMove("moving-up");
     }
     moveDown() {
         this.characterSpriteSheet.animateDown();
         this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() + .1);
-        this.resetYawnTimer();
-        this.yawn = false;
-        status = "moving-down";
+        this.finishMove("moving-down");
     };
     moveRight() {
         this.characterSpriteSheet.animateRight();
         this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() + .1, this.getLocationY() + this.getOffsetY());
-        this.resetYawnTimer();
-        this.yawn = false;
-        status = "moving-right";
+        this.finishMove("moving-right");
     }
     moveLeft() {
-
         this.characterSpriteSheet.animateLeft();
         this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() - .1, this.getLocationY() + this.getOffsetY());
+        this.finishMove("moving-left");
+    }
+
+    finishMove(move: string) {
         this.resetYawnTimer();
         this.yawn = false;
-        status = "moving-left";
+        this.status = move;
     }
 
     getLocationX() {
