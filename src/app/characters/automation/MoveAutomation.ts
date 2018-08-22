@@ -1,8 +1,8 @@
 
 import {AutomationJob} from "./AutomationJob";
-import {Map} from './Map';
-import {getTime} from './utils';
-import {LivingEntity} from './LivingEntity';
+import {Map} from '../../Map';
+import {getTime} from '../../utils';
+import {LivingEntity} from '../LivingEntity';
 
 export class MoveAutomation {
 
@@ -83,7 +83,7 @@ export class MoveAutomation {
         if ((this.player.getLocationX(this.map) + this.player.getOffsetX(this.map) + .1) >= (this.destinationX + 0.5)) {
             this.player.setLocation(this.map, (this.destinationX + 0.5), this.player.getLocationY(this.map) + this.player.getOffsetY(this.map));
             this.automationOnX = false;
-            this.player.getSpriteSheet().ResetSprite();
+            this.player.getSpriteSheet().resetSprite();
             return true;
         }
         else {
@@ -96,7 +96,7 @@ export class MoveAutomation {
         if ((this.player.getLocationX(this.map) + this.player.getOffsetX(this.map) - .1) <= (this.destinationX + 0.5)) {
             this.player.setLocation(this.map, (this.destinationX + 0.5), this.player.getLocationY(this.map) + this.player.getOffsetY(this.map));
             this.automationOnX = false;
-            this.player.getSpriteSheet().ResetSprite();
+            this.player.getSpriteSheet().resetSprite();
 
             return true;
         }
@@ -110,7 +110,7 @@ export class MoveAutomation {
         if ((this.player.getLocationY(this.map) + this.player.getOffsetY(this.map) - .1) <= (this.destinationY + 0.5)) {
             this.player.setLocation(this.map, this.player.getLocationX(this.map) + this.player.getOffsetX(this.map), (this.destinationY + 0.5));
             this.automationOnY = false;
-            this.player.getSpriteSheet().ResetSprite();
+            this.player.getSpriteSheet().resetSprite();
             return true;
         }
         else {
@@ -124,7 +124,7 @@ export class MoveAutomation {
         if ((this.player.getLocationY(this.map) + this.player.getOffsetY(this.map) + .1) >= (this.destinationY + 0.5)) {
             this.player.setLocation(this.map, this.player.getLocationX(this.map) + this.player.getOffsetX(this.map), (this.destinationY + 0.5));
             this.automationOnY = false;
-            this.player.getSpriteSheet().ResetSprite();
+            this.player.getSpriteSheet().resetSprite();
             return true;
         }
         else {

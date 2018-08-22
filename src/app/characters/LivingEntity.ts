@@ -1,7 +1,7 @@
 import {EFacing} from './EFacing';
-import {Map} from './Map';
-import {SpriteSheet} from './SpriteSheet';
-import {Settings} from './Settings';
+import {Map} from '../Map';
+import {SpriteSheet} from './animation/SpriteSheet';
+import {Settings} from '../Settings';
 
 export abstract class LivingEntity {
     protected imageShape: createjs.Shape;
@@ -63,7 +63,7 @@ export abstract class LivingEntity {
     }
 
     public resetAnimation() {
-        this.spriteSheet.ResetSprite();
+        this.spriteSheet.resetSprite();
     }
 
     private getEnemy(map: Map) {

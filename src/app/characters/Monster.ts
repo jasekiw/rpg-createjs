@@ -1,9 +1,9 @@
-import {MoveAutomation} from "./MoveAutomation";
-import {ChatConsole} from "./ChatConsole";
-import {SpriteSheet} from './SpriteSheet';
+import {MoveAutomation} from "./automation/MoveAutomation";
+import {ChatConsole} from "../ChatConsole";
+import {SpriteSheet} from './animation/SpriteSheet';
 import {LivingEntity} from './LivingEntity';
-import {Map} from './Map';
-import {Settings} from './Settings';
+import {Map} from '../Map';
+import {Settings} from '../Settings';
 
 export class Monster extends LivingEntity {
     private map;
@@ -115,7 +115,7 @@ export class Monster extends LivingEntity {
             }
             else {
                 this.attacking = false;
-                this.spriteSheet.ResetSprite();
+                this.spriteSheet.resetSprite();
             }
         }
     }

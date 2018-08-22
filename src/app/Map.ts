@@ -1,5 +1,5 @@
 import {Settings} from "./Settings";
-import {Player} from './Player';
+import {Player} from './characters/Player';
 /**
  * The Map Class
  * @param width

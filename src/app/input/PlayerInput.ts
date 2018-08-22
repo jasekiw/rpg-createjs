@@ -1,7 +1,7 @@
-import {Player} from './Player';
-import {Keys} from './keyboard/Keys';
-import {Keyboard} from './keyboard/Keyboard';
-import {Map} from './Map';
+import {Player} from '../characters/Player';
+import {Keys} from './Keys';
+import {Keyboard} from './Keyboard';
+import {Map} from '../Map';
 
 export class PlayerInput {
     constructor(private keyboard: Keyboard) {}

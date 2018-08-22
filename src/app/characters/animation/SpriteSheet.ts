@@ -1,5 +1,5 @@
-import {EFacing} from './EFacing';
-import {getTime} from './utils';
+import {EFacing} from '../EFacing';
+import {getTime} from '../../utils';
 import {Animation, AnimationCollection} from './AnimationCollection';
 
 export class SpriteSheet {
@@ -102,7 +102,7 @@ export class SpriteSheet {
         this.shape.graphics.beginBitmapFill(this.getSprite(number)).drawRect(0, 0, 100, 100);
     }
 
-    ResetSprite() {
+    resetSprite() {
         const animation = this.animations.walk;
         switch(this.lastDirection) {
             case EFacing.UP:  this.changeSprite(animation.up); break;

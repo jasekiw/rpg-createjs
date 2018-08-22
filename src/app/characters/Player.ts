@@ -1,8 +1,8 @@
-import {getTime} from "./utils";
-import {Settings} from "./Settings";
-import {Map} from './Map';
+import {getTime} from "../utils";
+import {Settings} from "../Settings";
+import {Map} from '../Map';
 import {LivingEntity} from './LivingEntity';
-import {SpriteSheet} from './SpriteSheet';
+import {SpriteSheet} from './animation/SpriteSheet';
 
 export class Player extends LivingEntity {
     private time = getTime();
@@ -49,14 +49,14 @@ export class Player extends LivingEntity {
             this.yawn = this.spriteSheet.animateYawn();
 
             if (!this.yawn) {
-                this.spriteSheet.ResetSprite();
+                this.spriteSheet.resetSprite();
                 this.resetYawnTimer();
             }
         }
     }
 
     public resetAnimation() {
-        this.spriteSheet.ResetSprite();
+        this.spriteSheet.resetSprite();
     }
 
 
