@@ -3,6 +3,7 @@ import {Settings} from "../Settings";
 import {Map} from '../Map';
 import {LivingEntity} from './LivingEntity';
 import {SpriteSheet} from './animation/SpriteSheet';
+import {EFacing} from './EFacing';
 
 export class Player extends LivingEntity {
     private time = getTime();
@@ -59,12 +60,29 @@ export class Player extends LivingEntity {
         this.spriteSheet.resetSprite();
     }
 
+    attack(map: Map) {
+        const attackDone = !this.spriteSheet.animateAttack();
+        if (!attackDone) return;
+        const enemy = this.getEnemy(map);
+        if (enemy != null) this.giveDamage(enemy);
+    }
 
-    attackEnemy(Monster) {
+    private getEnemy(map: Map) {
+        switch(this.getFacing()) {
+            case EFacing.UP:   return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) - 1);
+            case EFacing.DOWN: return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) + 1);
+            case EFacing.LEFT: return map.getEnemyIn(this.getLocationX(map) - 1, this.getLocationY(map));
+            case EFacing.RIGHT: return map.getEnemyIn(this.getLocationX(map) + 1, this.getLocationY(map));
+            default: return null;
+        }
+    }
+
+
+    giveDamage(monster: LivingEntity) {
         const damage = Math.round(Math.random() * (this.level * 30));
-        const blockChance = Monster.getLevel() / (this.level * 2);
+        const blockChance = monster.getLevel() / (this.level * 2);
         if (!((blockChance * 100) > (Math.random() * 100)))
-            Monster.takeDamage(damage);
+            monster.takeDamage(damage);
     }
 
     setLocation(map: Map, x, y) {

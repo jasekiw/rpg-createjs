@@ -6,7 +6,6 @@ import {Map} from '../Map';
 import {Settings} from '../Settings';
 
 export class Monster extends LivingEntity {
-    private map;
     private offsetX : number;
     private offsetY : number;
     private automationComplete = true;
@@ -24,45 +23,51 @@ export class Monster extends LivingEntity {
      * @param map
      * @param spriteSheet
      */
-    constructor(level: number, locationX: number, locationY: number, map, spriteSheet: SpriteSheet) {
+    constructor(level: number, locationX: number, locationY: number,  spriteSheet: SpriteSheet) {
         super();
-        this.map = map;
         this.hp = level * 80;
         this.level = level;
         this.locationX = locationX;
         this.locationY = locationY;
-        this.offsetX = (this.map.getTileWidth() / 2);
-        this.offsetY = (this.map.getTileHeight() / 2);
-        this.id = this.map.addEnemy(this);
         this.spriteSheet = spriteSheet;
     }
 
-    getXRelativeToScreen(map: Map) {
-        const tile = map.getTile(this.locationX, this.locationY);
+    public setMap(map: Map) {
+        this.map = map;
+        this.offsetX = (this.map.getTileWidth() / 2);
+        this.offsetY = (this.map.getTileHeight() / 2);
+    }
+
+    public setId(id: number) {
+        this.id = id;
+    }
+
+    getXRelativeToScreen() {
+        const tile = this.map.getTile(this.locationX, this.locationY);
         return tile.x + this.offsetX;
     }
 
-    getYRelativeToScreen(map: Map) {
-        const tile = map.getTile(this.locationX, this.locationY);
+    getYRelativeToScreen() {
+        const tile = this.map.getTile(this.locationX, this.locationY);
         return tile.y + this.offsetY;
     }
 
-    updatePosition(map: Map) {
-        this.imageShape.x = (this.getXRelativeToScreen(map) - 50);
-        this.imageShape.y = (this.getYRelativeToScreen(map) - 100);
+    updatePosition() {
+        this.imageShape.x = (this.getXRelativeToScreen() - 50);
+        this.imageShape.y = (this.getYRelativeToScreen() - 100);
     }
 
-    public addToScreen(map: Map) {
+    public addToScreen() {
         let character = new createjs.Shape();
-        character.graphics.beginBitmapFill(this.spriteSheet.getDefaultSprite()).drawRect(0, 0, 100, 100);
-        character.x = this.getXRelativeToScreen(map);
-        character.y = this.getYRelativeToScreen(map);
+        character.graphics.beginBitmapFill(this.spriteSheet.getDefaultSprite(), "no-repeat", ).drawRect(0, 0, 64, 64);
+        character.scaleX = 1.5625;
+        character.scaleY = 1.5625;
+        character.x = this.getXRelativeToScreen();
+        character.y = this.getYRelativeToScreen();
         Settings.stage.addChild(character);
         this.spriteSheet.setShape(character);
         this.imageShape = character;
     }
-
-
 
     getAnimation() {
         return this.spriteSheet;
@@ -74,6 +79,9 @@ export class Monster extends LivingEntity {
                 (this.map.getPlayerTileY() - this.locationY <= 1 && this.map.getPlayerTileY() - this.locationY >= -1)) {
                 this.attacking = true;
             }
+            else
+                this.attacking = false;
+
             if (this.attacking)
                 this.attack();
             if(automation)
@@ -111,7 +119,7 @@ export class Monster extends LivingEntity {
         if (attackDone) {
             if ((this.map.getPlayerTileX() - this.locationX <= 1 && this.map.getPlayerTileX() - this.locationX >= -1) &&
                 (this.map.getPlayerTileY() - this.locationY <= 1 && this.map.getPlayerTileY() - this.locationY >= -1)) {
-                this.attackEnemy(this.map.getPlayer());
+                this.giveDamage(this.map.getPlayer());
             }
             else {
                 this.attacking = false;
@@ -120,7 +128,7 @@ export class Monster extends LivingEntity {
         }
     }
 
-    attackEnemy(player: LivingEntity) {
+    giveDamage(player: LivingEntity) {
         if (player.getAlive()) {
             const damage = Math.round(Math.random() * (this.level * 30));
             const blockChance = player.getLevel() / (this.level * 2);
@@ -142,24 +150,16 @@ export class Monster extends LivingEntity {
     }
 
     moveUp() {
-        this.spriteSheet.animateUp();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() - .1);
-        status = "moving-up";
+
     }
     moveDown() {
-        this.spriteSheet.animateDown();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX(), this.getLocationY() + this.getOffsetY() + .1);
-        status = "moving-down";
+
     }
     moveRight() {
-        this.spriteSheet.animateRight();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() + .1, this.getLocationY() + this.getOffsetY());
-        status = "moving-right";
+
     }
     moveLeft() {
-        this.spriteSheet.animateLeft();
-        this.map.setPlayerLocation(this.getLocationX() + this.getOffsetX() - .1, this.getLocationY() + this.getOffsetY());
-        status = "moving-left";
+
     }
 
     getLocationX() {

@@ -10,11 +10,14 @@ export class SpriteSheet {
     protected speed = 100;
     protected shape: createjs.Shape;
     protected sprites = {};
+    protected scaleTo?: number;
+    protected originalSize?: number;
 
-
-    constructor(protected animations: AnimationCollection, protected defaultFrame: number, loadedSprites: Object) {
+    constructor(protected animations: AnimationCollection, protected defaultFrame: number, loadedSprites: Object, originalSize: number = 100, scaleTo: number = 100) {
         this.sprites = loadedSprites;
         this.frame = defaultFrame;
+        this.scaleTo = scaleTo;
+        this.originalSize = originalSize;
     }
 
     public getSprite(number: number) {
@@ -66,15 +69,16 @@ export class SpriteSheet {
     }
 
     animate4Directions(animation: Animation, defaultReturn: boolean, speed = this.speed) {
+        const reset = <Animation>(animation.reset || {});
         switch(this.lastDirection) {
-            case EFacing.UP: return this.animateSprite(animation.up, animation.length, speed);
-            case EFacing.DOWN: return this.animateSprite(animation.down, animation.length, speed);
-            case EFacing.LEFT: return this.animateSprite(animation.left, animation.length, speed);
-            case EFacing.RIGHT: return this.animateSprite(animation.right, animation.length, speed);
+            case EFacing.UP: return this.animateSprite(animation.up, animation.length, speed, reset.up);
+            case EFacing.DOWN: return this.animateSprite(animation.down, animation.length, speed, reset.down);
+            case EFacing.LEFT: return this.animateSprite(animation.left, animation.length, speed, reset.left);
+            case EFacing.RIGHT: return this.animateSprite(animation.right, animation.length, speed, reset.right);
             default: return defaultReturn;
         }
     }
-    animateSprite(number, length, speed = this.speed) {
+    animateSprite(number, length, speed = this.speed, reset = null) {
         this.time = getTime();
         const low = number;
         const high = low + length;
@@ -93,13 +97,19 @@ export class SpriteSheet {
                 return false;
             }
         }
+        if(reset) this.changeSprite(reset);
         return true;
     }
 
     changeSprite(number) {
         this.frame = number;
         this.shape.graphics.clear();
-        this.shape.graphics.beginBitmapFill(this.getSprite(number)).drawRect(0, 0, 100, 100);
+        this.shape.graphics.beginBitmapFill(this.getSprite(number)).drawRect(0, 0, this.originalSize, this.originalSize);
+        if((this.scaleTo / this.originalSize) !== 1) {
+            this.shape.scaleX = this.scaleTo / this.originalSize;
+            this.shape.scaleY = this.scaleTo / this.originalSize;
+        }
+
     }
 
     resetSprite() {

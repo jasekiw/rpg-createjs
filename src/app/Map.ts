@@ -1,5 +1,7 @@
 import {Settings} from "./Settings";
 import {Player} from './characters/Player';
+import {LivingEntity} from './characters/LivingEntity';
+import {Monster} from './characters/Monster';
 /**
  * The Map Class
  * @param width
@@ -13,7 +15,7 @@ export class Map {
     private readonly middleScreenX : number;
     // the middle of the screen y
     private readonly middleScreenY : number;
-    private enemies = [];
+    private enemies: Monster[] = [];
     private player;
     public readonly width: number;
     public readonly height: number;
@@ -52,9 +54,11 @@ export class Map {
         return this.player
     }
 
-    addEnemy(enemy) {
+    addEnemy(enemy: Monster) {
         this.enemies.push(enemy);
-        return this.enemies.length - 1;
+        enemy.setMap(this);
+        enemy.addToScreen();
+        enemy.setId(this.enemies.length - 1);
     }
 
     getEnemyIn(x, y) {
@@ -106,6 +110,14 @@ export class Map {
             }
         }
     };
+
+    public update() {
+        for (let i = 0; i < this.enemies.length; i++) {
+            if (this.enemies[i].update()) {
+                this.enemies.splice(i, 1);
+            }
+        }
+    }
 
     getPlayerTileX() {
         const topLeftTile = this.backgroundArr[0][0];

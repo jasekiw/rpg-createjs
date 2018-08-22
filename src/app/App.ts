@@ -7,6 +7,7 @@ import {Keyboard} from "./input/Keyboard";
 import {padLeft} from "./utils";
 import {PlayerInput} from './input/PlayerInput';
 import {SpriteSheet} from './characters/animation/SpriteSheet';
+import {Monster} from './characters/Monster';
 
 class App {
 
@@ -55,7 +56,7 @@ class App {
         let characterAnimations = {
             walk:   { up: 105, down: 131, left: 118, right: 144, length: 8},
             attack: { up: 157, down: 183, left: 170, right: 196, length: 5},
-            yawn:   { up: 1,   down: 27,  left: 14,  right: 40,  length: 6}
+            yawn:   { up: 1,   down: 27,  left: 14,  right: 40,  length: 6, reset:  {up: 105, down: 131, left: 118, right: 144}}
         };
 
         let skeletonAnimations = {
@@ -69,6 +70,10 @@ class App {
         // this.automation = new MoveAutomation(this, this.map);
         this.map.setPlayerTile(0, 0);
         this.map.addPlayer(this.player);
+        const skeletonSpriteSheet = new SpriteSheet(skeletonAnimations, skeletonAnimations.walk.down, this.loadSprite("skeleton_", 72), 64);
+        const skeleton = new Monster(1, 5, 5, skeletonSpriteSheet);
+        this.map.addEnemy(skeleton);
+
         createjs.Ticker.timingMode = createjs.Ticker.RAF;
         createjs.Ticker.addEventListener("tick", (e : Event) => this.tick(e));
     }
@@ -76,13 +81,16 @@ class App {
     tick(event : Event) {
         this.playerInput.handleInput(this.player,this.map);
         this.player.update();
+        this.map.update();
         this.stage.update(event);
     }
 
     loadSprite(prefix: string = "", max = 273) {
         let sprites = {};
-        for(let i =1 ; i < max; i++)
+        for(let i =1 ; i < max; i++) {
             sprites[i] = Settings.loader.getResult(prefix + i);
+        }
+
        return sprites;
     }
 }

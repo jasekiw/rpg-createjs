@@ -6,9 +6,10 @@ export interface AnimationCollection {
 }
 
 export interface Animation {
-    length: number,
+    length?: number,
     up: number,
     down: number,
     left: number,
-    right: number
+    right: number,
+    reset?: Animation
 }

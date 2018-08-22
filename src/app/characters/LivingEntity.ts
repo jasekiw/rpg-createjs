@@ -12,7 +12,13 @@ export abstract class LivingEntity {
     protected _alive = true;
     public get alive() { return this._alive; }
     protected spriteSheet: SpriteSheet;
+    protected map: Map;
 
+    public setMap(map: Map) {
+        this.map = map;
+        this.addToScreen();
+    }
+    abstract addToScreen();
 
     giveXp(xpToAdd) {
         this.experience += xpToAdd;
@@ -50,12 +56,7 @@ export abstract class LivingEntity {
     }
     abstract setLocation(map: Map, x: number, y: number);
 
-    attack(map: Map) {
-        const attackDone = !this.spriteSheet.animateAttack();
-        if (!attackDone) return;
-        const enemy = this.getEnemy(map);
-        if (enemy != null) this.attackEnemy(enemy);
-    }
+
 
     // which direction is the character facing
     public getFacing(): EFacing {
@@ -66,17 +67,8 @@ export abstract class LivingEntity {
         this.spriteSheet.resetSprite();
     }
 
-    private getEnemy(map: Map) {
-        switch(this.getFacing()) {
-            case EFacing.UP:   return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) - 1);
-            case EFacing.DOWN: return map.getEnemyIn(this.getLocationX(map), this.getLocationY(map) + 1);
-            case EFacing.LEFT: return map.getEnemyIn(this.getLocationX(map) - 1, this.getLocationY(map));
-            case EFacing.RIGHT: return map.getEnemyIn(this.getLocationX(map) + 1, this.getLocationY(map));
-            default: return null;
-        }
-    }
 
-    attackEnemy(enemy: LivingEntity) {
+    giveDamage(enemy: LivingEntity) {
         const damage = Math.round(Math.random() * (this.level * 30));
         const blockChance = enemy.getLevel() / (this.level * 2);
         if (!((blockChance * 100) > (Math.random() * 100)))
