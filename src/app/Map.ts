@@ -1,4 +1,5 @@
 import {Settings} from "./Settings";
+import {Player} from './Player';
 /**
  * The Map Class
  * @param width
@@ -8,8 +9,10 @@ import {Settings} from "./Settings";
 export class Map {
     private tileWidth = 100;
     private tileHeight = 100;
-    private readonly initialLocationX : number;
-    private readonly initialLocationY : number;
+    // the middle of the screen x
+    private readonly middleScreenX : number;
+    // the middle of the screen y
+    private readonly middleScreenY : number;
     private enemies = [];
     private player;
     public readonly width: number;
@@ -18,8 +21,8 @@ export class Map {
     private groundImg : HTMLImageElement;
 
     constructor(width, height) {
-        this.initialLocationX = Math.round(((window.innerWidth / 2)));
-        this.initialLocationY = Math.round(((window.innerHeight / 2)));
+        this.middleScreenX = Math.round(((window.innerWidth / 2)));
+        this.middleScreenY = Math.round(((window.innerHeight / 2)));
         this.width = width;
         this.height = height;
         this.groundImg = <HTMLImageElement>Settings.loader.getResult("grass");
@@ -45,7 +48,7 @@ export class Map {
         return background;
     }
 
-    getPlayer() {
+    getPlayer(): Player {
         return this.player
     }
 
@@ -70,13 +73,17 @@ export class Map {
         return this.tileWidth;
     }
 
+    getTile(x: number, y: number) {
+        return this.backgroundArr[y][x];
+    }
+
     getTileHeight() {
         return this.tileHeight;
     }
 
     setPlayerLocation(moveX, moveY) {
-        const left = this.initialLocationX;
-        const top = this.initialLocationY;
+        const left = this.middleScreenX;
+        const top = this.middleScreenY;
 
         for (let x = 0; x < this.width; x++) {
             for (let y = 0; y < this.height; y++) {
@@ -89,8 +96,8 @@ export class Map {
             this.enemies[i].updatePosition();
     }
     setPlayerTile(moveX, moveY) {
-        const left = this.initialLocationX;
-        const top = this.initialLocationY;
+        const left = this.middleScreenX;
+        const top = this.middleScreenY;
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 let elem = this.backgroundArr[y][x];
@@ -100,22 +107,23 @@ export class Map {
         }
     };
 
-    getPlayerLocationX() {
-        const left = this.initialLocationX;
-        const elem = this.backgroundArr[0][0];
-        return Math.floor( (elem.x - left) / -100)
+    getPlayerTileX() {
+        const topLeftTile = this.backgroundArr[0][0];
+        return Math.floor( (topLeftTile.x - this.middleScreenX) / -100)
     }
-    getPlayerLocationY() {
-        const elem = this.backgroundArr[0][0];
-        return Math.floor( (elem.y - this.initialLocationY) / -100)
+    getPlayerTileY() {
+        const topLeftTile = this.backgroundArr[0][0];
+        return Math.floor( (topLeftTile.y - this.middleScreenY) / -100)
     }
-    getPlayerOffsetX() {
-        const left = this.initialLocationX;
-        const elem = this.backgroundArr[0][0];
-        return ( (elem.x - left) / -100) - Math.floor( (elem.x - left) / -100);
+    getPlayerTileOffsetX() {
+        const left = this.middleScreenX;
+        const topLeftTile = this.backgroundArr[0][0];
+        //
+        return ( (topLeftTile.x - left) / -100) -
+            Math.floor( (topLeftTile.x - left) / -100);
     }
-    getPlayerOffsetY() {
-        const top = this.initialLocationY;
+    getPlayerTileOffsetY() {
+        const top = this.middleScreenY;
         const elem = this.backgroundArr[0][0];
         return ( (elem.y - top) / -100) - Math.floor( (elem.y - top) / -100);
     }
